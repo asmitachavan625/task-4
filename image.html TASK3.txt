@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Smarticus Carousel</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: linear-gradient(to right, #cc1168, #70bacd);
+      color: #333;
+    }
+
+    .app-header {
+      background: #ab16cd;
+      color: rgb(11, 11, 11);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 20px;
+      background: rgb(211, 182, 210);
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .carousel {
+      position: relative;
+      height: 500px;
+      overflow: hidden;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+      z-index: 0;
+    }
+
+    .slide.active {
+      opacity: 1;
+      z-index: 1;
+    }
+
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .like-btn {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: white;
+      border: none;
+      border-radius: 50%;
+      padding: 15px;
+      font-size: 22px;
+      color: #999;
+      cursor: pointer;
+      transition: color 0.3s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .like-btn.liked {
+      color: #e63946;
+    }
+
+    .controls {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .controls button {
+      margin: 0 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      background-color: #c35fc5;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .controls button:hover {
+      background-color: #555;
+    }
+
+    .liked-section {
+      margin-top: 30px;
+      display: none;
+    }
+
+    .liked-section.active {
+      display: block;
+    }
+
+    .liked-section h3 {
+      margin-bottom: 10px;
+    }
+
+    .liked-images {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .liked-images img {
+      width: 200px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <h1>I AM SMARTICUS</h1>
+  </header>
+
+  <div class="container">
+    <h2>Image Carousel</h2>
+
+    <div class="carousel">
+      <div class="slide active">
+        <img src="slider1.jpg" alt="Slide 1" />
+        <button class="like-btn"><i class="fa-regular fa-heart"></i></button>
+      </div>
+      <div class="slide">
+        <img src="slider 2.jpg" alt="Slide 2" />
+        <button class="like-btn"><i class="fa-regular fa-heart"></i></button>
+      </div>
+      <div class="slide">
+        <img src="slider 3.jpg" alt="Slide 3" />
+        <button class="like-btn"><i class="fa-regular fa-heart"></i></button>
+      </div>
+      <div class="slide">
+        <img src="slider4.jpg" alt="Slide 4" />
+        <button class="like-btn"><i class="fa-regular fa-heart"></i></button>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button onclick="prevSlide()">Previous</button>
+      <button onclick="nextSlide()">Next</button>
+      <button onclick="toggleLikedSection()">Show Liked Images</button>
+      <button onclick="location.href='index.html'">Back</button>
+    </div>
+
+    <div class="liked-section" id="likedSection">
+      <h3>Liked Images</h3>
+      <div class="liked-images" id="likedImagesContainer"></div>
+    </div>
+  </div>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const likedImages = new Set();
+
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.remove('active');
+        slide.querySelector('.like-btn').classList.remove('liked');
+        const icon = slide.querySelector('.like-btn i');
+        icon.classList.add('fa-regular');
+        icon.classList.remove('fa-solid');
+
+        if (i === index) {
+          slide.classList.add('active');
+          const imgSrc = slide.querySelector('img').src;
+          if (likedImages.has(imgSrc)) {
+            slide.querySelector('.like-btn').classList.add('liked');
+            icon.classList.remove('fa-regular');
+            icon.classList.add('fa-solid');
+          }
+        }
+      });
+    }
+
+    function nextSlide() {
+      currentSlide = (currentSlide + 1) % slides.length;
+      showSlide(currentSlide);
+    }
+
+    function prevSlide() {
+      currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+      showSlide(currentSlide);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.like-btn').forEach((button, index) => {
+        button.addEventListener('click', () => {
+          const img = slides[index].querySelector('img');
+          const imgSrc = img.src;
+          const icon = button.querySelector('i');
+          const isLiked = button.classList.toggle('liked');
+
+          icon.classList.toggle('fa-solid', isLiked);
+          icon.classList.toggle('fa-regular', !isLiked);
+
+          if (isLiked) {
+            likedImages.add(imgSrc);
+          } else {
+            likedImages.delete(imgSrc);
+          }
+
+          updateLikedSection();
+        });
+      });
+    });
+
+    function updateLikedSection() {
+      const container = document.getElementById('likedImagesContainer');
+      container.innerHTML = '';
+      likedImages.forEach(src => {
+        const img = document.createElement('img');
+        img.src = src;
+        container.appendChild(img);
+      });
+    }
+
+    function toggleLikedSection() {
+      const section = document.getElementById('likedSection');
+      section.classList.toggle('active');
+    }
+  </script>
+</body>
+</html>

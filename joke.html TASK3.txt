@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Joke - I AM SMARTICUS</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="joke-style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>I AM SMARTICUS</h1>
+  </header>
+
+  <div class="main-container">
+    <h1>Joke Generator</h1>
+
+    <div class="joke-container">
+      <p id="joke-text">Joke will appear here</p>
+    </div>
+
+    <div class="star-rating" id="star-rating">
+      <span data-value="1">&#9733;</span>
+      <span data-value="2">&#9733;</span>
+      <span data-value="3">&#9733;</span>
+      <span data-value="4">&#9733;</span>
+      <span data-value="5">&#9733;</span>
+    </div>
+
+    <div class="buttons-container">
+      <button class="btn" onclick="fetchJoke()">Get Joke</button>
+      <button class="btn" onclick="location.href='index.html'">Back</button>
+    </div>
+  </div>
+
+  <script src="joke.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz - I AM SMARTICUS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <h1>I AM SMARTICUS</h1>
+  </header>
+
+
+<div class="container quiz-container">
+  <div class="quiz-header">
+    <h2 id="question">Loading...</h2>
+    <div id="options"></div>
+    <p id="result"></p>
+  </div>
+
+
+  <div class="quiz-footer">
+    <p id="progress">Question 1 of 5 </p>
+    <p id="timer">Time : 25s</p>
+
+    
+
+    <div class="quiz-nav">
+      <button class="btn" onclick="prevQuestion()">Back</button>
+      <button class="btn" onclick="nextQuestion()">Next</button>
+    </div>
+  </div>
+</div>
+
+
+  <script src="quiz.js"></script>
+</body>
+</html>

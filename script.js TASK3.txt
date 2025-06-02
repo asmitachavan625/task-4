@@ -1,0 +1,90 @@
+// Section navigation
+function navigateTo(sectionId) {
+  document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+  document.getElementById(sectionId).classList.add('active');
+  if (sectionId === 'quiz') loadQuiz();
+}
+
+// Quiz logic
+const quizData = [
+  { question: "Capital of France?", options: ["Paris", "London", "Berlin", "Madrid"], answer: "Paris" },
+  { question: "2 + 2 * 2 = ?", options: ["6", "4", "8", "2"], answer: "6" }
+];
+let currentQuizIndex = 0;
+
+function loadQuiz() {
+  const q = quizData[currentQuizIndex];
+  document.getElementById("question").textContent = q.question;
+  const optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
+  q.options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.className = "btn";
+    btn.textContent = opt;
+    btn.onclick = () => checkAnswer(opt);
+    optionsDiv.appendChild(btn);
+  });
+}
+
+function checkAnswer(selected) {
+  const result = document.getElementById("result");
+  if (selected === quizData[currentQuizIndex].answer) {
+    result.textContent = "Correct!";
+  } else {
+    result.textContent = "Incorrect!";
+  }
+  currentQuizIndex = (currentQuizIndex + 1) % quizData.length;
+  setTimeout(() => {
+    result.textContent = "";
+    loadQuiz();
+  }, 1500);
+}
+
+// Joke logic
+function fetchJoke() {
+  const jokeText = document.getElementById("joke-text");
+  jokeText.textContent = "Loading...";
+  fetch("https://official-joke-api.appspot.com/random_joke")
+    .then(res => res.json())
+    .then(data => {
+      jokeText.textContent = `${data.setup} - ${data.punchline}`;
+    })
+    .catch(() => {
+      jokeText.textContent = "Failed to load joke.";
+    });
+}
+
+let currentIndex = 0;
+const images = document.querySelectorAll(".carousel-img");
+const likeBtn = document.querySelector(".like-btn");
+
+function showSlide(index) {
+  images.forEach((img, i) => {
+    img.classList.remove("active");
+    if (i === index) {
+      img.classList.add("active");
+    }
+  });
+  likeBtn.classList.remove("liked"); // reset like
+}
+
+function nextSlide() {
+  currentIndex = (currentIndex + 1) % images.length;
+  showSlide(currentIndex);
+}
+
+function prevSlide() {
+  currentIndex = (currentIndex - 1 + images.length) % images.length;
+  showSlide(currentIndex);
+}
+
+function toggleLike() {
+  likeBtn.classList.toggle("liked");
+}
+
+function navigateTo(sectionId) {
+  document.querySelectorAll(".section").forEach(section => {
+    section.classList.remove("active");
+  });
+  document.getElementById(sectionId).classList.add("active");
+}

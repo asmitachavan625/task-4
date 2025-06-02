@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>All-in-One Interactive App</title>
+  <link rel="stylesheet" href="style.css">
+  
+</head>
+<body>
+   <header class="app-header">
+  <h1>I AM SMARTICUS</h1>
+</header>
+
+<div class="container">
+<!-- Your container content here -->
+
+
+<div class="main-wrapper">
+  <img src="avaar.jpg" alt="Avatar" class="avatar" />
+  
+
+
+  
+  <!-- Welcome Section -->
+  <section id="home" class="section active">
+    <h1>WELCOME TO INTERACTIVE APP</h1>
+    <p>Select an activity:</p>
+<button onclick="location.href='quiz.html'" class="btn">QUIZ SECTION</button>
+<!-- Example Joke Button -->
+<button onclick="location.href='joke.html'" class="btn">😂 JOKES SECTION</button>
+
+<button onclick="location.href='image.html'" class="btn">Open Image Carousel</button>
+
+ </section>
+   <div class="social-icons">
+  <a href="#"><img src="google.png" alt="Google" /></a>
+  <a href="#"><img src="facebook.png" alt="Facebook" /></a>
+  <a href="#"><img src="linkedin.png" alt="LinkedIn" /></a>
+  <a href="#"><img src="instagram.png" alt="Instagram" /></a>
+</div>
+
+
+
+
+  <script src="script.js"></script>
+</body>
+</html>

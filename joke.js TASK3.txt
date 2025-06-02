@@ -1,0 +1,46 @@
+const jokeText = document.getElementById('joke-text');
+const jokeContainer = document.querySelector('.joke-container');
+const stars = document.querySelectorAll('#star-rating span');
+
+function fetchJoke() {
+  fetch("https://official-joke-api.appspot.com/random_joke")
+    .then(res => res.json())
+    .then(data => {
+      updateJoke(`${data.setup} — ${data.punchline}`);
+    })
+    .catch(() => {
+      updateJoke("Failed to load joke. Try again.");
+    });
+}
+
+function popJoke() {
+  jokeContainer.classList.remove('pop-animation');
+  void jokeContainer.offsetWidth; // trigger reflow
+  jokeContainer.classList.add('pop-animation');
+}
+
+stars.forEach(star => {
+  star.addEventListener('mouseenter', () => {
+    const val = star.getAttribute('data-value');
+    stars.forEach(s => {
+      s.classList.toggle('hovered', s.getAttribute('data-value') <= val);
+    });
+  });
+
+  star.addEventListener('mouseleave', () => {
+    stars.forEach(s => s.classList.remove('hovered'));
+  });
+
+  star.addEventListener('click', () => {
+    const val = star.getAttribute('data-value');
+    stars.forEach(s => s.classList.toggle('selected', s.getAttribute('data-value') <= val));
+  });
+});
+
+function updateJoke(newJoke) {
+  jokeText.textContent = newJoke;
+  popJoke();
+
+  // Reset stars on new joke
+  stars.forEach(star => star.classList.remove('selected'));
+}

@@ -1,0 +1,184 @@
+const fullQuizPool = [
+  { question: "What is the capital of France?", options: ["Berlin", "Paris", "Rome", "Madrid"], answer: "Paris" },
+  { question: "Which planet is known as the Red Planet?", options: ["Earth", "Venus", "Mars", "Jupiter"], answer: "Mars" },
+  { question: "Who wrote 'Hamlet'?", options: ["Shakespeare", "Homer", "Tolstoy", "Dickens"], answer: "Shakespeare" },
+  { question: "Which river is the longest in the world?", options: ["Amazon", "Mississippi", "Nile", "Yangtze"], answer: "Nile" },
+  { question: "What gas is used to extinguish fires?", options: ["Oxygen", "Nitrogen", "Carbon dioxide", "Hydrogen"], answer: "Nitrogen" },
+  { question: "Which country hosted the 2022 FIFA World Cup?", options: ["Brazil", "Russia", "Qatar", "Germany"], answer: "Qatar" },
+  { question: "How many continents are there?", options: ["5", "6", "7", "8"], answer: "7" },
+  { question: "What is the boiling point of water at sea level?", options: ["90°C", "100°C", "110°C", "120°C"], answer: "100°C" },
+  { question: "Which organ purifies blood in the human body?", options: ["Heart", "Liver", "Kidney", "Lungs"], answer: "Kidney" },
+  { question: "Which metal is liquid at room temperature?", options: ["Gold", "Mercury", "Copper", "Silver"], answer: "Mercury" },
+  { question: "What is the smallest prime number?", options: ["0", "1", "2", "3"], answer: "2" },
+  { question: "Which programming language is known for web development?", options: ["Python", "Java", "C++", "JavaScript"], answer: "JavaScript" },
+  { question: "Who painted the Mona Lisa?", options: ["Vincent Van Gogh", "Leonardo da Vinci", "Pablo Picasso", "Michelangelo"], answer: "Leonardo da Vinci" },
+  { question: "Which element has the chemical symbol 'O'?", options: ["Osmium", "Oxygen", "Oxide", "Ozone"], answer: "Oxygen" },
+  { question: "Which planet has the most moons?", options: ["Earth", "Mars", "Jupiter", "Saturn"], answer: "Saturn" }
+];
+
+function getRandomQuestions(count) {
+  return [...fullQuizPool].sort(() => Math.random() - 0.5).slice(0, count);
+}
+
+let quizData = getRandomQuestions(5);
+let current = 0;
+let correctAnswers = 0;
+let timeLeft = 60;
+let timerInterval;
+
+function loadQuestion() {
+  const q = quizData[current];
+  document.getElementById("question").innerText = q.question;
+  const optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
+
+  q.options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.innerText = opt;
+    btn.className = "btn";
+    btn.onclick = () => checkAnswer(opt, btn);
+    optionsDiv.appendChild(btn);
+  });
+
+  document.getElementById("progress").innerText = `Question ${current + 1} of ${quizData.length}`;
+  document.getElementById("result").innerText = "";
+  resetTimer();
+}
+
+function checkAnswer(selected, btn) {
+  const correct = quizData[current].answer;
+  const allButtons = document.querySelectorAll("#options .btn");
+
+  allButtons.forEach(button => {
+    button.disabled = true;
+    if (button.innerText === correct) {
+      button.classList.add("correct");
+    }
+    if (button === btn && selected !== correct) {
+      button.classList.add("wrong");
+    }
+  });
+
+  if (selected === correct) {
+    correctAnswers++;
+    document.getElementById("result").innerText = "Correct!";
+  } else {
+    document.getElementById("result").innerText = `Wrong! Correct answer is: ${correct}`;
+  }
+
+  clearInterval(timerInterval);
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= quizData.length) {
+    showFinalResult();
+  } else {
+    loadQuestion();
+  }
+}
+
+function prevQuestion() {
+  if (current > 0) {
+    current--;
+    loadQuestion();
+  }
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timeLeft = 25;
+  document.getElementById("timer").innerText = `Time Left: ${timeLeft}s`;
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    document.getElementById("timer").innerText = `Time Left: ${timeLeft}s`;
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      document.getElementById("result").innerText = "Time's up!";
+      document.querySelectorAll("#options .btn").forEach(btn => btn.disabled = true);
+    }
+  }, 1000);
+}
+
+function restartQuiz() {
+  quizData = getRandomQuestions(5);
+  current = 0;
+  correctAnswers = 0;
+
+   const container = document.querySelector(".quiz-container");
+  container.innerHTML = `
+    <div class="quiz-header">
+      <h2 id="question">Loading...</h2>
+      <div id="options"></div>
+      <p id="result"></p>
+    </div>
+    <div class="quiz-footer">
+      <p id="progress">Question 1 of ${quizData.length}</p>
+      <p id="timer">Time Left: 60s</p>
+      <div class="quiz-nav">
+        <button class="btn" onclick="prevQuestion()">Back</button>
+        <button class="btn" onclick="nextQuestion()">Next</button>
+      </div>
+    </div>
+  `;
+
+  loadQuestion();
+}
+
+function showFinalResult() {
+  clearInterval(timerInterval);
+
+  // Ask for username
+  let username = prompt("Enter your name for the leaderboard:");
+  if (!username) username = "Anonymous";
+
+  // Save score
+  const scorePercent = Math.round((correctAnswers / quizData.length) * 100);
+  const leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+
+  leaderboard.push({
+    name: username,
+    score: `${correctAnswers}/${quizData.length}`,
+    percentage: scorePercent,
+    date: new Date().toLocaleDateString()
+  });
+
+  leaderboard.sort((a, b) => b.percentage - a.percentage);
+  localStorage.setItem("leaderboard", JSON.stringify(leaderboard.slice(0, 10))); // Keep top 10
+
+  // Generate leaderboard HTML
+  let leaderboardHTML = "<h3>🏆 Leaderboard</h3><ul id='leaderboard'>";
+  leaderboard.slice(0, 10).forEach((entry, i) => {
+    let badge = "";
+    if (i === 0) badge = "🥇";
+    else if (i === 1) badge = "🥈";
+    else if (i === 2) badge = "🥉";
+
+    leaderboardHTML += `<li>${badge} ${entry.name} - ${entry.score} (${entry.percentage}%) <span>${entry.date}</span></li>`;
+  });
+  leaderboardHTML += "</ul>";
+
+const container = document.querySelector(".quiz-container");
+container.innerHTML = `
+  <h2>Quiz Complete!</h2>
+  <p>Total Questions: ${quizData.length}</p>
+  <p>Correct Answers: ${correctAnswers}</p>
+  <p>Score: ${scorePercent}%</p>
+  <div class="result-buttons">
+    <button class="btn" onclick="restartQuiz()">Retake Quiz</button>
+    <button class="btn" onclick="location.href='index.html'">Go Home</button>
+    <button class="btn danger" onclick="resetLeaderboard()">Reset Leaderboard</button>
+  </div>
+  ${leaderboardHTML}
+`;
+
+}
+
+function resetLeaderboard() {
+  if (confirm("Are you sure you want to reset the leaderboard? This cannot be undone.")) {
+    localStorage.removeItem("leaderboard");
+    alert("Leaderboard has been reset!");
+    showFinalResult(); // Re-render
+  }
+}
